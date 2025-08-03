@@ -31,7 +31,11 @@ def show_task(task_id):
     task = {
         'id': task_id,
         'title': f'Task number {task_id}',
-        'description': 'This is a placeholder task description.'
+        'description': 'This is a placeholder task description.',
+        'has_previous': task_id > MIN_TASK_ID,
+        'has_next': task_id < MAX_TASK_ID,
+        'previous_id': task_id - 1 if task_id > MIN_TASK_ID else None,
+        'next_id': task_id + 1 if task_id < MAX_TASK_ID else None
     }
     return render_template('task.html', task=task)
 
