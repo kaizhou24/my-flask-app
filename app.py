@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 
 app = Flask(__name__)
 
@@ -18,6 +18,16 @@ def about():
 
 @app.route('/task/<int:task_id>')
 def show_task(task_id):
+
+    MIN_TASK_ID = 1
+    MAX_TASK_ID = 10
+
+    if task_id < MIN_TASK_ID:
+        return redirect(url_for('show_task', task_id=MIN_TASK_ID))
+    
+    if task_id > MAX_TASK_ID:
+        return redirect(url_for('show_task', task_id=MAX_TASK_ID))
+
     task = {
         'id': task_id,
         'title': f'Task number {task_id}',
