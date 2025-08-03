@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Task Tracker{% endblock %}
+
+{% block content %}
+    <h2>Welcome, {{ name }}!</h2>
+    
+    <section class="task-list">
+        <h3>Your Current Tasks</h3>
+        
+        {% if tasks %}
+            <ul>
+                {% for task in tasks %}
+                    <li>
+                        <!-- Loop index starts at 0, so we add 1 for display -->
+                        <a href="{{ url_for('show_task', task_id=loop.index) }}">
+                            {{ task }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No tasks yet. Time to get productive!</p>
+        {% endif %}
+    </section>
+    
+    <section class="debug-info">
+        <h3>Template Variables (Debug Info)</h3>
+        <p>Name variable contains: "{{ name }}"</p>
+        <p>Number of tasks: {{ tasks|length }}</p>
+    </section>
+{% endblock %}

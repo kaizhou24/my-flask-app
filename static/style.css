@@ -1,0 +1,93 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f4f4f4;
+}
+
+/* Navigation Styles */
+nav {
+    background-color: #3498db;
+    color: white;
+    padding: 1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+nav h1 {
+    display: inline-block;
+    margin-right: 2rem;
+}
+
+nav ul {
+    display: inline-block;
+    list-style: none;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 1rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+nav a:hover {
+    background-color: rgba(255,255,255,0.2);
+}
+
+/* Main Content Area */
+main {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Task List Styles */
+.task-list ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.task-list li {
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    background-color: #ecf0f1;
+    border-left: 4px solid #3498db;
+    transition: transform 0.2s ease;
+}
+
+.task-list li:hover {
+    transform: translateX(5px);
+    background-color: #e8eef0;
+}
+
+/* Debug Info Section (Development Only) */
+.debug-info {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #ffeaa7;
+    border: 1px dashed #fdcb6e;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 2rem;
+    color: #7f8c8d;
+}

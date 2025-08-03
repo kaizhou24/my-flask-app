@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Task #{{ task.id }} - Task Tracker{% endblock %}
+
+{% block content %}
+    <h2>{{ task.title }}</h2>
+    
+    <div class="task-details">
+        <p><strong>Task ID:</strong> {{ task.id }}</p>
+        <p><strong>Description:</strong> {{ task.description }}</p>
+    </div>
+    
+    <nav class="task-navigation">
+        <!-- Demonstrate URL building with arithmetic -->
+        <a href="{{ url_for('show_task', task_id=task.id - 1) }}">← Previous Task</a>
+        <a href="{{ url_for('index') }}">Back to List</a>
+        <a href="{{ url_for('show_task', task_id=task.id + 1) }}">Next Task →</a>
+    </nav>
+{% endblock %}
