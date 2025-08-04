@@ -1,16 +1,43 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
+from math import ceil
 
 app = Flask(__name__)
 
+PER_PAGE = 5
+USER_NAME = 'kaizhou'
+SAMPLE_TASKS = [f'Task {i}' for i in range(1, 27)]
+MIN_TASK_ID, MAX_TASK_ID = 1, len(SAMPLE_TASKS)
+MIN_PAGE, MAX_PAGE = 1, ceil(len(SAMPLE_TASKS) / PER_PAGE)
+
 @app.route('/')
 def index():
-    user_name = 'kaizhou'
-    current_tasks = [
-        'Learn Flask routing',
-        'Understand templates',
-        'Build a task tracker',
-    ]
-    return render_template('index.html', name=user_name, tasks=current_tasks)
+    page = request.args.get('page', 1, type=int)
+
+    if page < MIN_PAGE:
+        return redirect(url_for('index', page=MIN_PAGE))
+    
+    if page > MAX_PAGE:
+        return redirect(url_for('index', page=MAX_PAGE))
+
+    start, end = get_pagination_index(page, PER_PAGE)
+    paginated_tasks = SAMPLE_TASKS[start:end]
+
+    context = {
+        'name': USER_NAME,
+        'tasks': paginated_tasks,
+        'page': page,
+        'total_pages': MAX_PAGE,
+        'has_prev': page > 1,
+        'has_next': page < MAX_PAGE,
+        'start': start,
+    }
+
+    return render_template('index.html', **context)
+
+def get_pagination_index(page, per_page):
+    start_index = (page - 1) * per_page
+    end_index = start_index + per_page
+    return (start_index, end_index)
 
 @app.route('/about')
 def about():
@@ -18,9 +45,6 @@ def about():
 
 @app.route('/task/<int:task_id>')
 def show_task(task_id):
-
-    MIN_TASK_ID = 1
-    MAX_TASK_ID = 10
 
     if task_id < MIN_TASK_ID:
         return redirect(url_for('show_task', task_id=MIN_TASK_ID))

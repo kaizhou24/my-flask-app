@@ -12,8 +12,7 @@
             <ul>
                 {% for task in tasks %}
                     <li>
-                        <!-- Loop index starts at 0, so we add 1 for display -->
-                        <a href="{{ url_for('show_task', task_id=loop.index) }}">
+                        <a href="{{ url_for('show_task', task_id=start+loop.index) }}">
                             {{ task }}
                         </a>
                     </li>
@@ -22,6 +21,22 @@
         {% else %}
             <p>No tasks yet. Time to get productive!</p>
         {% endif %}
+        
+        <nav class="task-navigation">
+            {% if has_prev %}
+                <a href="{{ url_for('index', page=page-1) }}" 
+                class="nav-button">← Previous Page</a>
+            {% else %}
+                <span class="nav-button disabled">← Previous Page</span>
+            {% endif %}
+            
+            {% if has_next %}
+                <a href="{{ url_for('index', page=page+1) }}" 
+                class="nav-button">Next Page →</a>
+            {% else %}
+                <span class="nav-button disabled">Next Page →</span>
+            {% endif %}
+        </nav>
     </section>
     
     <section class="debug-info">
