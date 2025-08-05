@@ -5,7 +5,10 @@ app = Flask(__name__)
 
 PER_PAGE = 5
 USER_NAME = 'kaizhou'
-SAMPLE_TASKS = [f'Task {i}' for i in range(1, 27)]
+SAMPLE_TASKS = [
+    {'id': i, 'title': f'Task {i}', 'description': f'Description for task {i}'}
+    for i in range(1, 27)
+]
 MIN_TASK_ID, MAX_TASK_ID = 1, len(SAMPLE_TASKS)
 MIN_PAGE, MAX_PAGE = 1, ceil(len(SAMPLE_TASKS) / PER_PAGE)
 
@@ -26,10 +29,12 @@ def index():
         'name': USER_NAME,
         'tasks': paginated_tasks,
         'page': page,
+        'total_tasks': len(SAMPLE_TASKS),
         'total_pages': MAX_PAGE,
         'has_prev': page > 1,
         'has_next': page < MAX_PAGE,
         'start': start,
+        'end': min(end, len(SAMPLE_TASKS))
     }
 
     return render_template('index.html', **context)
@@ -54,7 +59,7 @@ def show_task(task_id):
 
     task = {
         'id': task_id,
-        'title': f'Task number {task_id}',
+        'title': f'Task {task_id}',
         'description': 'This is a placeholder task description.',
         'has_previous': task_id > MIN_TASK_ID,
         'has_next': task_id < MAX_TASK_ID,

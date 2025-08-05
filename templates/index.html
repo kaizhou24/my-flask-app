@@ -7,13 +7,13 @@
     
     <section class="task-list">
         <h3>Your Current Tasks</h3>
-        
+        <p>Showing {{ start+1 }}-{{ end }} of {{ total_tasks }}</p>
         {% if tasks %}
             <ul>
                 {% for task in tasks %}
                     <li>
                         <a href="{{ url_for('show_task', task_id=start+loop.index) }}">
-                            {{ task }}
+                            {{ task['title'] }}
                         </a>
                     </li>
                 {% endfor %}
@@ -36,6 +36,7 @@
             {% else %}
                 <span class="nav-button disabled">Next Page →</span>
             {% endif %}
+            <p>Page {{ page }} of {{ total_pages }}</p>
         </nav>
     </section>
     
