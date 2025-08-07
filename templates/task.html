@@ -3,7 +3,7 @@
 {% block title %}Task #{{ task.id }} - Task Tracker{% endblock %}
 
 {% block content %}
-    <h2>{{ task.title }}</h2>
+    <h2>{{ task.subject }}</h2>
     
     <div class="task-details">
         <p><strong>Task ID:</strong> {{ task.id }}</p>
@@ -11,8 +11,8 @@
     </div>
     
     <nav class="task-navigation">
-        {% if task.has_previous %}
-            <a href="{{ url_for('show_task', task_id=task.previous_id) }}" 
+        {% if has_previous %}
+            <a href="{{ url_for('show_task', task_id=previous_id) }}" 
                class="nav-button">← Previous Task</a>
         {% else %}
             <span class="nav-button disabled">← Previous Task</span>
@@ -20,8 +20,8 @@
         
         <a href="{{ url_for('index') }}" class="nav-button">Back to List</a>
         
-        {% if task.has_next %}
-            <a href="{{ url_for('show_task', task_id=task.next_id) }}" 
+        {% if has_next %}
+            <a href="{{ url_for('show_task', task_id=next_id) }}" 
                class="nav-button">Next Task →</a>
         {% else %}
             <span class="nav-button disabled">Next Task →</span>

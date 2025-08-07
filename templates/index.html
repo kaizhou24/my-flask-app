@@ -12,8 +12,8 @@
             <ul>
                 {% for task in tasks %}
                     <li>
-                        <a href="{{ url_for('show_task', task_id=start+loop.index) }}">
-                            {{ task['title'] }}
+                        <a href="{{ url_for('show_task', task_id=task.id) }}">
+                            {{ task['subject'] }}
                         </a>
                     </li>
                 {% endfor %}

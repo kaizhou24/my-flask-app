@@ -1,48 +1,51 @@
 from flask import Flask, render_template, redirect, url_for, request
+from flask_sqlalchemy import SQLAlchemy
 from math import ceil
 
 app = Flask(__name__)
 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    subject = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    created_on = db.Column(db.DateTime, default=db.func.now())
+    due_date = db.Column(db.Date, nullable=True)
+
+def populate_sample_data():
+    if Task.query.count() == 0:
+        tasks = [Task(subject=f"Task {i}", description=f"Description for task {i}") 
+                 for i in range(1, 30)]
+        db.session.add_all(tasks)
+        db.session.commit()
+        print(f"Created {len(tasks)} tasks")  # Keep this for now
+
 PER_PAGE = 5
 USER_NAME = 'kaizhou'
-SAMPLE_TASKS = [
-    {'id': i, 'title': f'Task {i}', 'description': f'Description for task {i}'}
-    for i in range(1, 27)
-]
-MIN_TASK_ID, MAX_TASK_ID = 1, len(SAMPLE_TASKS)
-MIN_PAGE, MAX_PAGE = 1, ceil(len(SAMPLE_TASKS) / PER_PAGE)
 
 @app.route('/')
 def index():
     page = request.args.get('page', 1, type=int)
 
-    if page < MIN_PAGE:
-        return redirect(url_for('index', page=MIN_PAGE))
-    
-    if page > MAX_PAGE:
-        return redirect(url_for('index', page=MAX_PAGE))
-
-    start, end = get_pagination_index(page, PER_PAGE)
-    paginated_tasks = SAMPLE_TASKS[start:end]
+    pagination = Task.query.paginate(page=page, per_page=PER_PAGE, error_out=False)
 
     context = {
         'name': USER_NAME,
-        'tasks': paginated_tasks,
-        'page': page,
-        'total_tasks': len(SAMPLE_TASKS),
-        'total_pages': MAX_PAGE,
-        'has_prev': page > 1,
-        'has_next': page < MAX_PAGE,
-        'start': start,
-        'end': min(end, len(SAMPLE_TASKS))
+        'tasks': pagination.items,
+        'page': pagination.page,
+        'total_tasks': pagination.total,
+        'total_pages': pagination.pages,
+        'has_prev': pagination.has_prev,
+        'has_next': pagination.has_next,
+        'start': (pagination.page - 1) * PER_PAGE + 1,
+        'end': min(pagination.page * PER_PAGE, pagination.total)
     }
 
     return render_template('index.html', **context)
-
-def get_pagination_index(page, per_page):
-    start_index = (page - 1) * per_page
-    end_index = start_index + per_page
-    return (start_index, end_index)
 
 @app.route('/about')
 def about():
@@ -50,23 +53,23 @@ def about():
 
 @app.route('/task/<int:task_id>')
 def show_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    previous_task = Task.query.filter(Task.id < task_id).order_by(Task.id.desc()).first()
+    next_task = Task.query.filter(Task.id > task_id).order_by(Task.id.asc()).first()
 
-    if task_id < MIN_TASK_ID:
-        return redirect(url_for('show_task', task_id=MIN_TASK_ID))
-    
-    if task_id > MAX_TASK_ID:
-        return redirect(url_for('show_task', task_id=MAX_TASK_ID))
-
-    task = {
-        'id': task_id,
-        'title': f'Task {task_id}',
-        'description': 'This is a placeholder task description.',
-        'has_previous': task_id > MIN_TASK_ID,
-        'has_next': task_id < MAX_TASK_ID,
-        'previous_id': task_id - 1 if task_id > MIN_TASK_ID else None,
-        'next_id': task_id + 1 if task_id < MAX_TASK_ID else None
+    context = {
+        'task': task,
+        'has_previous': bool(previous_task),
+        'previous_id': previous_task.id if previous_task else None,
+        'has_next': bool(next_task),
+        'next_id': next_task.id if next_task else None,
     }
-    return render_template('task.html', task=task)
+
+    return render_template('task.html', **context)
+
+with app.app_context():
+    db.create_all()
+    populate_sample_data()
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
